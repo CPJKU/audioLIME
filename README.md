@@ -7,8 +7,22 @@ for machine learning models in music information retrival (MIR).
 audioLIME is based on the method lime (local interpretable model-agnostic explanations) work 
 presented in [this paper](https://arxiv.org/abs/1602.04938) and uses source separation estimates in
 order to create interpretable components.
-If you use audioLIME in your work, please
-use this [bib file for citation](citation.bib).
+
+## Citing
+
+If you use audioLIME in your work, please cite it:
+
+```bibtex
+@misc{haunschmid2020audiolime,
+    title={{audioLIME: Listenable Explanations Using Source Separation}},
+    author={Verena Haunschmid and Ethan Manilow and Gerhard Widmer},
+    year={2020},
+    eprint={2008.00582},
+    archivePrefix={arXiv},
+    primaryClass={cs.SD},
+    howpublished={13th International Workshop on Machine Learning and Music}
+}
+```
 
 ## Installation
 
@@ -25,30 +39,40 @@ git clone git@github.com:CPJKU/audioLIME.git  # SSH
 
 ```sh
 cd audioLIME
-python setup.py develop
-```
-
-or 
-
-```sh
-cd audioLIME
 python setup.py install
 ```
 
-If you do not know the difference between `develop` and `install` check 
-[this article](http://naoko.github.io/your-project-install-pip-setup/).
-
-### Note on Requirements
-
-To keep it lightweight, not all possible dependencies are contained in `setup.py`. 
-Depending on the factorization you want to use, you might need different packages, 
-e.g. `nussl` or `spleeter`. 
+To install a version for development purposes 
+[check out this article](http://naoko.github.io/your-project-install-pip-setup/).
 
 ### Tests
 
 To test your installation, the following test are available:
 
-`MODEL_PATH=/share/home/verena/experiments/spleeter/pretrained_models/  python -m unittest tests.test_SpleeterFactorization`
+`python -m unittest tests.test_SpleeterFactorization`
+
+`python -m unittest tests.test_DataProviders`
+
+## Note on Requirements
+
+To keep it lightweight, not all possible dependencies are contained in `setup.py`. 
+Depending on the factorization you want to use, you might need different packages, 
+e.g. `nussl` or `spleeter`. 
+
+### Installation & Usage of spleeter
+
+```sh
+pip install spleeter
+```
+When you're using `spleeter` for the first time, it will download the used model in a directory
+`pretrained_models`. You can only change the location by setting an environment variable 
+`MODEL_PATH` *before* `spleeter` is imported. There are different ways to 
+[set an environment variable](https://www.serverlab.ca/tutorials/linux/administration-linux/how-to-set-environment-variables-in-linux/),
+for example:
+
+```sh
+export MODEL_PATH=/share/home/verena/experiments/spleeter/pretrained_models/
+```
 
 ## Available Factorizations
 
@@ -103,3 +127,4 @@ and [explanation](https://soundcloud.com/veroamilbe/hop-along-sister-explanation
 
 * [ ] upload to [pypi.org](https://pypi.org) (to allow installation via `pip`)
 * [ ] usage example for `SoundLIMEFactorization`
+* [ ] tutorial in form of a Jupyter Notebook
