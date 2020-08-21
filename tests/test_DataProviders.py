@@ -1,5 +1,5 @@
 import unittest
-from audioLIME.data_provider import DataProvider, RawAudioProvider, NusslAudioProvider
+from audioLIME.data_provider import DataProvider, RawAudioProvider
 import tempfile
 import librosa
 import numpy as np
@@ -39,10 +39,6 @@ class TestDataProviders(unittest.TestCase):
         print("ref", self.temp_signal)
         self.assertTrue(np.allclose(dp.get_mix(), self.temp_signal, atol=10**self.decimal_places))
 
-    def test_NusslAudioProviderMix(self):
-        dp = NusslAudioProvider(self.audio_path)
-        self.assertTrue(np.allclose(dp.get_mix().audio_data, self.temp_signal, atol=10**self.decimal_places))
-
     def test_RawAudioAnalysisWindow(self):
         dp = RawAudioProvider(self.audio_path)
         start = 32000
@@ -53,17 +49,6 @@ class TestDataProviders(unittest.TestCase):
         self.assertAlmostEqual(mix[-1], self.temp_signal[-1], places=self.decimal_places)
         self.assertEqual(len(mix), leng)
         self.assertTrue(np.allclose(dp._original_mix, self.temp_signal, atol=10**self.decimal_places))
-
-    def test_NusslAudioAnalysisWindow(self):
-        dp = NusslAudioProvider(self.audio_path)
-        start = 32000
-        leng = 16000
-        dp.set_analysis_window(start, leng)
-        mix = dp.get_mix().audio_data[0]  # nested
-        self.assertAlmostEqual(mix[0], self.temp_signal[start], places=self.decimal_places)
-        self.assertAlmostEqual(mix[-1], self.temp_signal[-1], places=self.decimal_places)
-        self.assertEqual(len(mix), leng)
-        self.assertTrue(np.allclose(dp._original_mix.audio_data, self.temp_signal, atol=10**self.decimal_places))
 
 if __name__ == '__main__':
     unittest.main()

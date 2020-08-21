@@ -80,9 +80,6 @@ Currently we have the following factorizations implemented:
 
 * SpleeterFactorization based on the source separation system spleeter 
 ([code](https://github.com/deezer/spleeter/))
-* CerberusFactorization based on Cerberus [arxiv](https://arxiv.org/abs/1910.12621)
-* OVAFactorization based on OVA-models as described in the slakh paper 
-[arxiv](https://arxiv.org/abs/1909.08494)
 * SoundLIMEFactorization: time-frequency segmentation based on 
 [SoundLIME](https://github.com/saum25/SoundLIME) 
 (the original implementation was not flexible enough for our experiments)
@@ -128,3 +125,4 @@ and [explanation](https://soundcloud.com/veroamilbe/hop-along-sister-explanation
 * [ ] upload to [pypi.org](https://pypi.org) (to allow installation via `pip`)
 * [ ] usage example for `SoundLIMEFactorization`
 * [ ] tutorial in form of a Jupyter Notebook
+* [ ] more documentation
