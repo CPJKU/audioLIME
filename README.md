@@ -8,6 +8,15 @@ audioLIME is based on the method lime (local interpretable model-agnostic explan
 presented in [this paper](https://arxiv.org/abs/1602.04938) and uses source separation estimates in
 order to create interpretable components.
 
+## Current branch
+
+This branch contains the version of audioLIME that was used in our MML2020 publication 
+[audioLIME: Listenable Explanations Using Source Separation](https://arxiv.org/abs/2008.00582)
+([code for the experiments](https://github.com/expectopatronum/mml2020-experiments/)).
+
+For the most current version of audioLIME checkout the 
+[master branch](https://github.com/CPJKU/audioLIME).
+
 ## Citing
 
 If you use audioLIME in your work, please cite it:
