@@ -4,6 +4,16 @@ Contains data providers used for all factorizations that inherit from DataBasedF
 
 import librosa
 import numpy as np
+import warnings
+from copy import deepcopy
+
+try:
+    from nussl import AudioSignal
+except ImportError:
+    warnings.warn("Couldn't import stuff from nussl.")
+    DeepTranscriptionEstimation = None
+    AudioSignal = None
+
 
 def remove_splits(y, splits):
     y = np.concatenate([y[x[0]:x[1]] for x in splits])
@@ -57,3 +67,20 @@ class RawAudioProvider(DataProvider):
         waveform, _ = librosa.load(self._audio_path, mono=True, sr=musicnn_sr)
         return waveform
 
+class NusslAudioProvider(DataProvider):
+    """
+    :class:`NusslAudioProvider` is used when the factorization algorithm requires a `nussl`
+    `AudioSignal` object.
+    """
+    def __init__(self, audio_path):
+        super().__init__(audio_path)
+
+    def initialize_mix(self):
+        y, _ = librosa.load(self._audio_path, sr=16000, mono=True)
+        y = remove_silence(y)
+        mix = AudioSignal(audio_data_array=y, sample_rate=16000)
+        return mix
+
+    def set_analysis_window(self, start_sample, y_length):
+        self._mix = deepcopy(self._original_mix)
+        self._mix.set_active_region(start_sample, start_sample+y_length)
