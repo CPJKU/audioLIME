@@ -23,7 +23,8 @@ class AudioExplanation(object):
         self.neighborhood_labels = neighborhood_labels
         self.intercept = {}
         self.local_exp = {}
-        self.local_pred = None
+        self.local_pred = {}
+        self.score = {}
         self.distance = {}
 
     def get_sorted_components(self, label, positive_components=True, negative_components=True, num_components='auto',
@@ -186,7 +187,7 @@ class LimeAudioExplainer(object):
             for label in top:
                 (ret_exp.intercept[label],
                  ret_exp.local_exp[label],
-                 ret_exp.score, ret_exp.local_pred) = self.base.explain_instance_with_data(
+                 ret_exp.score[label], ret_exp.local_pred[label]) = self.base.explain_instance_with_data(
                     data, labels, distances, label, num_features,
                     model_regressor=model_regressor,
                     feature_selection=self.feature_selection)
@@ -194,8 +195,8 @@ class LimeAudioExplainer(object):
             for target in range(num_reg_targets):
                 (ret_exp.intercept[target],
                  ret_exp.local_exp[target],
-                 ret_exp.score,
-                 ret_exp.distance[target]) = self.base.explain_instance_with_data(
+                 ret_exp.score[target],
+                 ret_exp.local_pred[target]) = self.base.explain_instance_with_data(
                     data, labels, distances, target, num_features,
                     model_regressor=model_regressor,
                     feature_selection=self.feature_selection)
