@@ -114,7 +114,7 @@ class SpleeterFactorization(DataBasedFactorization):
         super().__init__(data_provider, n_temporal_segments, composition_fn)
 
     def initialize_components(self):
-        spleeter_sr = 41000
+        spleeter_sr = 44100
 
         if Separator is None:
             raise ImportError('spleeter is not imported')
