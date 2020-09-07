@@ -13,8 +13,7 @@ setup(name='audioLIME',
           'scipy',
           'librosa',
           'scikit-learn>=0.18',
-          'regressors',
-          'torch<1.5'
+          'regressors'
       ],
       include_package_data=True,
       zip_safe=False)

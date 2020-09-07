@@ -94,7 +94,7 @@ FCN ([code](https://github.com/minzwon/sota-music-tagging-models),
 For this to work you need to install the requirements found in the above mentioned repo of 
 the tagger and spleeter:
 ```sh
-pip install spleeter
+pip install -r examples/requirements.txt
 ```
 
 ```python
