@@ -48,12 +48,10 @@ class RawAudioProvider(DataProvider):
     """
     :class:`RawAudioProvider` is used when the factorization algorithm requires raw audio.
     """
-    def __init__(self, audio_path):
+    def __init__(self, audio_path, target_sr=16000):
+        self.target_sr = target_sr
         super().__init__(audio_path)
 
     def initialize_mix(self):
-        musicnn_sr = 16000  # todo: pass as target_sr
-
-        waveform, _ = librosa.load(self._audio_path, mono=True, sr=musicnn_sr)
+        waveform, _ = librosa.load(self._audio_path, mono=True, sr=self.target_sr)
         return waveform
-
