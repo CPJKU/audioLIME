@@ -3,19 +3,6 @@ Contains data providers used for all factorizations that inherit from DataBasedF
 """
 
 import librosa
-import numpy as np
-
-def remove_splits(y, splits):
-    y = np.concatenate([y[x[0]:x[1]] for x in splits])
-    return y
-
-
-def remove_silence(y, top_db=60, frame_length=1024, hop_length=512, return_splits=False):
-    splits = librosa.effects.split(y, top_db=top_db, frame_length=frame_length, hop_length=hop_length)
-    y = remove_splits(y, splits)
-    if return_splits:
-        return y, splits
-    return y
 
 
 class DataProvider(object):
