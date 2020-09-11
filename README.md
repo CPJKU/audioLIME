@@ -24,6 +24,19 @@ If you use audioLIME in your work, please cite it:
 }
 ```
 
+## Publications
+
+audioLIME is introduced/used in the following publications:
+
+* Verena Haunschmid, Ethan Manilow and Gerhard Widmer, *audioLIME: Listenable Explanations Using Source Separation* 
+  * paper: [arxiv](https://arxiv.org/abs/2008.00582)
+  * code: [branch `mml2020`](https://github.com/CPJKU/audioLIME/tree/mml2020) and [mml2020-experiments](https://github.com/expectopatronum/mml2020-experiments/)
+
+* Verena Haunschmid, Ethan Manilow and Gerhard Widmer, *Towards Musically Meaningful Explanations Using Source Separation* 
+  * paper: [arxiv](https://arxiv.org/abs/2009.02051)
+
+
+
 ## Installation
 
 The audioLIME package is not on PyPI yet. For installing it, clone the git repo and install it using 
