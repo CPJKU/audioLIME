@@ -1,7 +1,7 @@
 from audioLIME.data_provider import RawAudioProvider
 from audioLIME.factorization import SpleeterFactorization
 from audioLIME import lime_audio
-import librosa
+import soundfile as sf
 import os
 
 from examples.sota_utils import prepare_config, get_predict_fn
@@ -35,6 +35,6 @@ if __name__ == '__main__':
                                                                           return_indeces=True)
 
     print("predicted label:", label)
-    librosa.output.write_wav(os.path.join("output", "explanation.wav"), sum(top_components), 16000)
-    librosa.output.write_wav(os.path.join("output", "original.wav"),
-                             spleeter_factorization.data_provider.get_mix(), 16000)
+    sf.write(os.path.join("output", "explanation.wav"), sum(top_components), 16000)
+    sf.write(os.path.join("output", "original.wav"),
+             spleeter_factorization.data_provider.get_mix(), 16000)

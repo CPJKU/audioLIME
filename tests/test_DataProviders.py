@@ -1,7 +1,7 @@
 import unittest
 from audioLIME.data_provider import DataProvider, RawAudioProvider
 import tempfile
-import librosa
+import soundfile as sf
 import numpy as np
 
 
@@ -23,7 +23,7 @@ class TestDataProviders(unittest.TestCase):
         #     librosa.resample(librosa.resample(self.temp_signal, self.sr, 41000), 41000, self.sr)  # otherwise they won't be equal
         self.tmpfile = tempfile.NamedTemporaryFile()
         self.audio_path = self.tmpfile.name
-        librosa.output.write_wav(self.audio_path, self.temp_signal, self.sr)
+        sf.write(self.audio_path, self.temp_signal, self.sr, format="wav")
         self.decimal_places = 5
 
     def test_BaseDataProvider(self):
