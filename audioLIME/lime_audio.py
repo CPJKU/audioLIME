@@ -11,14 +11,13 @@ from sklearn.utils import check_random_state
 from audioLIME import lime_base
 
 class AudioExplanation(object):
-    def __init__(self, factorization, factors, neighborhood_data, neighborhood_labels):
+    def __init__(self, factorization, neighborhood_data, neighborhood_labels):
         """Init function.
 
         Args:
             factorization: a Factorization object
         """
         self.factorization = factorization
-        self.components = factors
         self.neighborhood_data = neighborhood_data
         self.neighborhood_labels = neighborhood_labels
         self.intercept = {}
@@ -159,11 +158,6 @@ class LimeAudioExplainer(object):
             random_seed = self.random_state.randint(0, high=1000)
 
         self.factorization = factorization
-        try:
-            factors = factorization.retrieve_components()
-        except ValueError as e:
-            raise e
-
         top = labels
 
         data, labels = self.data_labels(predict_fn, num_samples,
@@ -175,7 +169,7 @@ class LimeAudioExplainer(object):
             metric=distance_metric
         ).ravel()
 
-        ret_exp = AudioExplanation(self.factorization, factors, data, labels)
+        ret_exp = AudioExplanation(self.factorization, data, labels)
 
         if is_classification:
             if top_labels:
