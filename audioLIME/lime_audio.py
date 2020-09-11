@@ -27,39 +27,37 @@ class AudioExplanation(object):
         self.score = {}
         self.distance = {}
 
-    def get_sorted_components(self, label, positive_components=True, negative_components=True, num_components='auto',
-                              thresh=1e-8, min_abs_weight=0.0, return_indeces=False):
+    def get_sorted_components(self, label, positive_components=True, negative_components=True, num_components='all',
+                              min_abs_weight=0.0, return_indeces=False):
         if label not in self.local_exp:
             raise KeyError('Label not in explanation')
         if positive_components is False and negative_components is False:
             raise ValueError('positive_components, negative_components or both must be True')
+        if num_components == 'auto':
+            raise ValueError("num_components='auto' was removed.")
+        if num_components == 'all':
+            import warnings
+            warnings.warn("'all' replaces 'auto' as the default parameters.")
 
         exp = self.local_exp[label]
 
-        w = [[x[0], x[1], x[2]] for x in exp]
-        used_features, weights, pvals = np.array(w, dtype=int)[:, 0], np.array(w)[:, 1], np.array(w)[:, 2]
+        w = [[x[0], x[1]] for x in exp]
+        used_features, weights = np.array(w, dtype=int)[:, 0], np.array(w)[:, 1]
 
         if not negative_components:
             pos_weights = np.argwhere(weights > 0)[:, 0]
             used_features = used_features[pos_weights]
-            weights, pvals = weights[pos_weights], pvals[pos_weights]
+            weights = weights[pos_weights]
         elif not positive_components:
             neg_weights = np.argwhere(weights < 0)[:, 0]
             used_features = used_features[neg_weights]
-            weights, pvals = weights[neg_weights], pvals[neg_weights]
+            weights = weights[neg_weights]
         if min_abs_weight != 0.0:
             abs_weights = np.argwhere(abs(weights) >= min_abs_weight)[:, 0]
             used_features = used_features[abs_weights]
-            weights, pvals = weights[abs_weights], pvals[abs_weights]
+            weights = weights[abs_weights]
 
-        if num_components == 'auto':
-            # Auto thresholding as introduced in [Haunschmid, Chowdhury and Widmer 2019]
-            thresh = np.abs(thresh)  # just to make sure
-            auto_weights = np.where(((weights < 0) & (pvals / weights > -thresh)) |
-                                    ((weights > 0) & (pvals / weights < thresh)))[0]
-            used_features = used_features[auto_weights]
-            num_components = len(used_features)
-        elif num_components == 'all':
+        if num_components == 'all':
             num_components = len(used_features)
         else:
             assert(isinstance(num_components, int))

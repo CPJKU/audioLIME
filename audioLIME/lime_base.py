@@ -195,7 +195,6 @@ class LimeBase(object):
         easy_model = model_regressor
         easy_model.fit(neighborhood_data[:, used_features],
                        labels_column, sample_weight=weights)
-        pvals = stats.coef_pval(easy_model, neighborhood_data[:, used_features],labels_column)
         prediction_score = easy_model.score(
             neighborhood_data[:, used_features],
             labels_column, sample_weight=weights)
@@ -203,10 +202,10 @@ class LimeBase(object):
         local_pred = easy_model.predict(neighborhood_data[0, used_features].reshape(1, -1))
 
         if self.absolute_feature_sort:
-            sorted_local_exp = sorted(zip(used_features, easy_model.coef_, pvals),
+            sorted_local_exp = sorted(zip(used_features, easy_model.coef_),
                    key=lambda x: np.abs(x[1]), reverse=True) # TODO: check if this is sorted by weight
         else:
-            sorted_local_exp = sorted(zip(used_features, easy_model.coef_, pvals),
+            sorted_local_exp = sorted(zip(used_features, easy_model.coef_),
                                   key=lambda x: x[1], reverse=True)
 
         if self.verbose:
