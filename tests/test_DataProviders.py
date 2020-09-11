@@ -19,8 +19,6 @@ class TestDataProviders(unittest.TestCase):
 
         self.sr = 16000
         self.temp_signal = np.random.randn(self.sr * 3) # create "fake" signal with 3 seconds length
-        # self.reference_signal_resampled = \
-        #     librosa.resample(librosa.resample(self.temp_signal, self.sr, 41000), 41000, self.sr)  # otherwise they won't be equal
         self.tmpfile = tempfile.NamedTemporaryFile()
         self.audio_path = self.tmpfile.name
         sf.write(self.audio_path, self.temp_signal, self.sr, format="wav")
@@ -35,20 +33,20 @@ class TestDataProviders(unittest.TestCase):
 
     def test_RawAudioProviderMix(self):
         dp = RawAudioProvider(self.audio_path)
-        print("mix", dp.get_mix())
-        print("ref", self.temp_signal)
         self.assertTrue(np.allclose(dp.get_mix(), self.temp_signal, atol=10**self.decimal_places))
 
     def test_RawAudioAnalysisWindow(self):
         dp = RawAudioProvider(self.audio_path)
+        reference_signal = dp.get_mix()
         start = 32000
         leng = 16000
         dp.set_analysis_window(start, leng)
         mix = dp.get_mix()
-        self.assertAlmostEqual(mix[0], self.temp_signal[start], places=self.decimal_places)
-        self.assertAlmostEqual(mix[-1], self.temp_signal[-1], places=self.decimal_places)
+        self.assertAlmostEqual(mix[0], reference_signal[start], places=self.decimal_places)
+        self.assertAlmostEqual(mix[-1], reference_signal[-1], places=self.decimal_places)
         self.assertEqual(len(mix), leng)
         self.assertTrue(np.allclose(dp._original_mix, self.temp_signal, atol=10**self.decimal_places))
+
 
 if __name__ == '__main__':
     unittest.main()
