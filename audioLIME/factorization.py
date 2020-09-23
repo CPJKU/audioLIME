@@ -135,12 +135,13 @@ class SpleeterFactorization(DataBasedFactorization):
 
 
 class SpleeterPrecomputedFactorization(DataBasedFactorization):
-    def __init__(self, data_provider, n_temporal_segments, composition_fn, model_name, target_sr=16000):
+    def __init__(self, data_provider, n_temporal_segments, composition_fn, model_name,
+                 spleeter_sources_path, target_sr=16000):
         assert isinstance(data_provider, RawAudioProvider)  # TODO: nicer check
         self.model_name = model_name
         self.target_sr = target_sr
         sample_name = os.path.basename(data_provider.get_audio_path().replace(".mp3", ""))
-        self.sources_path = os.path.join("/share/home/verena/data_old/aljanaki_midlevel/spleeter_sources/",
+        self.sources_path = os.path.join(spleeter_sources_path,
                                          model_name.replace("spleeter:", ""), sample_name)
         print(self.sources_path)
         super().__init__(data_provider, n_temporal_segments, composition_fn)
