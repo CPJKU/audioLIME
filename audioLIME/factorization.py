@@ -132,3 +132,29 @@ class SpleeterFactorization(DataBasedFactorization):
             librosa.resample(np.mean(prediction[key], axis=1), spleeter_sr, self.target_sr) for
             key in prediction]
         self._components_names = list(prediction.keys())
+
+
+class SpleeterPrecomputedFactorization(DataBasedFactorization):
+    def __init__(self, data_provider, n_temporal_segments, composition_fn, model_name, target_sr=16000):
+        assert isinstance(data_provider, RawAudioProvider)  # TODO: nicer check
+        self.model_name = model_name
+        self.target_sr = target_sr
+        sample_name = os.path.basename(data_provider.get_audio_path().replace(".mp3", ""))
+        self.sources_path = os.path.join("/share/home/verena/data_old/aljanaki_midlevel/spleeter_sources/",
+                                         model_name.replace("spleeter:", ""), sample_name)
+        print(self.sources_path)
+        super().__init__(data_provider, n_temporal_segments, composition_fn)
+
+    def initialize_components(self):
+        spleeter_sr = 44100
+
+        prediction = {}
+        for source_file in os.listdir(self.sources_path):
+            instr = source_file.replace(".wav", "")
+            prediction[instr], _ = librosa.load(os.path.join(self.sources_path, source_file), sr=spleeter_sr, mono=True)
+
+        self.original_components = [
+            librosa.resample(np.mean(prediction[key], axis=1), spleeter_sr, self.target_sr) for
+            key in prediction]
+        self._components_names = list(prediction.keys())
+
