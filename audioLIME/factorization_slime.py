@@ -27,11 +27,6 @@ class SoundLIMEFactorization(Factorization):
         self.mix = self.original_mix[start_sample:start_sample+y_length]
 
         D = librosa.stft(self.mix)
-        temp_length = D.shape[1] // self.temporal_segments
-        actual_length = temp_length * self.temporal_segments
-        if actual_length < D.shape[1]:
-            warnings.warn("Last {} frames are ignored".format(D.shape[1] - actual_length))
-        D = D[:, :actual_length]
 
         mag, phase = librosa.magphase(D)
         self.phase = phase
@@ -59,6 +54,10 @@ class SoundLIMEFactorization(Factorization):
         temp_length = S.shape[1] // self.temporal_segments
         freq_length = S.shape[0] // self.frequency_segments
 
+        left_over = S.shape[1] - temp_length * self.temporal_segments
+        if left_over > 0:
+            warnings.warn("Adding last {} frames to last segment".format(left_over))
+
         def compute_f_start(f):
             return f * freq_length
 
@@ -84,7 +83,10 @@ class SoundLIMEFactorization(Factorization):
             f = so % self.frequency_segments
 
             t_start = t * temp_length
-            t_end = t_start + temp_length
+            if t == self.temporal_segments:
+                t_end = S.shape[1]
+            else:
+                t_end = t_start + temp_length
             f_start = compute_f_start(f)
             f_end = compute_f_end(f)
             # print("f", f, f_start, f_end)
