@@ -94,7 +94,8 @@ class DataBasedFactorization(Factorization):
             segment_start = s * samples_per_segment
             segment_end = segment_start + samples_per_segment
             for co in range(self.get_number_components()):
-                current_component = np.zeros(explained_length, dtype=np.float32)
+                # current_component = np.zeros(explained_length, dtype=np.float32)
+                current_component = torch.cuda.FloatTensor(explained_length) # TODO: make this variable!
                 current_component[segment_start:segment_end] = self.components[co][segment_start:segment_end]
                 temporary_components.append(current_component)
                 component_names.append(self._components_names[co]+str(s))
@@ -167,7 +168,16 @@ class SpleeterPrecomputedFactorization(DataBasedFactorization):
         prediction = pickle.load(open(prediction_path, "rb"))
 
         self.original_components = [
-            librosa.resample(np.mean(prediction[key], axis=1), spleeter_sr, self.target_sr) for
-            key in prediction]
+            torch.cuda.FloatTensor(
+                librosa.resample(np.mean(prediction[key], axis=1), spleeter_sr, self.target_sr))
+            for key in prediction]
         self._components_names = list(prediction.keys())
+
+    def compose_model_input(self, components=None):
+        sel_sources = self.retrieve_components(selection_order=components)
+        if len(sel_sources) > 1:
+            y = torch.stack(sel_sources, dim=0).sum(dim=0)
+        else:
+            y = sel_sources[0]
+        return self.composition_fn(y)
 
