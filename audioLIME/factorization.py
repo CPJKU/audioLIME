@@ -29,7 +29,7 @@ def default_composition_fn(x):
 
 class DataBasedFactorization(Factorization):
 
-    def __init__(self, data_provider, n_temporal_segments, composition_fn=None):
+    def __init__(self, data_provider, n_temporal_segments, composition_fn=None, use_torch=False):
         """
         :param data_provider: object of class DataProvider
         :param n_temporal_segments: number of temporal segments used in the segmentation
@@ -46,6 +46,7 @@ class DataBasedFactorization(Factorization):
         self.original_components = []
         self.components = []
         self._components_names = []
+        self.use_torch = use_torch
 
         self.initialize_components()  # that's the part that's specific to each source sep. algorithm
         self.set_analysis_window(0, len(self.data_provider.get_mix()))
@@ -94,8 +95,10 @@ class DataBasedFactorization(Factorization):
             segment_start = s * samples_per_segment
             segment_end = segment_start + samples_per_segment
             for co in range(self.get_number_components()):
-                # current_component = np.zeros(explained_length, dtype=np.float32)
-                current_component = torch.cuda.FloatTensor(explained_length) # TODO: make this variable!
+                if self.use_torch:
+                    current_component = torch.cuda.FloatTensor(explained_length).zero_()
+                else:
+                    current_component = np.zeros(explained_length, dtype=np.float32)
                 current_component[segment_start:segment_end] = self.components[co][segment_start:segment_end]
                 temporary_components.append(current_component)
                 component_names.append(self._components_names[co]+str(s))
@@ -120,7 +123,7 @@ class SpleeterFactorization(DataBasedFactorization):
         assert isinstance(data_provider, RawAudioProvider)  # TODO: nicer check
         self.model_name = model_name
         self.target_sr = target_sr
-        super().__init__(data_provider, n_temporal_segments, composition_fn)
+        super().__init__(data_provider, n_temporal_segments, composition_fn, use_torch=False)
 
     def initialize_components(self):
         spleeter_sr = 44100
@@ -151,7 +154,7 @@ class SpleeterPrecomputedFactorization(DataBasedFactorization):
                                          model_name.replace("spleeter:", ""), sample_name)
         # print(self.sources_path)
 
-        super().__init__(data_provider, n_temporal_segments, composition_fn)
+        super().__init__(data_provider, n_temporal_segments, composition_fn, use_torch=True)
 
     def initialize_components(self):
         spleeter_sr = 44100
@@ -171,11 +174,17 @@ class SpleeterPrecomputedFactorization(DataBasedFactorization):
             torch.cuda.FloatTensor(
                 librosa.resample(np.mean(prediction[key], axis=1), spleeter_sr, self.target_sr))
             for key in prediction]
+
+        # self.original_components = [
+        #         librosa.resample(np.mean(prediction[key], axis=1), spleeter_sr, self.target_sr)
+        #     for key in prediction]
+
         self._components_names = list(prediction.keys())
 
     def compose_model_input(self, components=None):
         sel_sources = self.retrieve_components(selection_order=components)
         if len(sel_sources) > 1:
+            # y = sum(sel_sources)
             y = torch.stack(sel_sources, dim=0).sum(dim=0)
         else:
             y = sel_sources[0]
