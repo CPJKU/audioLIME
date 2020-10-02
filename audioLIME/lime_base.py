@@ -203,7 +203,7 @@ class LimeBase(object):
 
         if self.absolute_feature_sort:
             sorted_local_exp = sorted(zip(used_features, easy_model.coef_),
-                   key=lambda x: np.abs(x[1]), reverse=True) # TODO: check if this is sorted by weight
+                   key=lambda x: np.abs(x[1]), reverse=True)
         else:
             sorted_local_exp = sorted(zip(used_features, easy_model.coef_),
                                   key=lambda x: x[1], reverse=True)
