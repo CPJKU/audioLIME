@@ -161,6 +161,8 @@ class SpleeterPrecomputedFactorization(DataBasedFactorization):
 
         prediction_path = os.path.join(self.sources_path, "prediction.pt")
         if not os.path.exists(prediction_path):
+            if not os.path.exists(self.sources_path):
+                os.mkdir(self.sources_path)
             separator = Separator(self.model_name, multiprocess=False)
             waveform = self.data_provider.get_mix()
             prediction = separate(separator, waveform, self.target_sr, spleeter_sr)
