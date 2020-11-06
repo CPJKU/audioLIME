@@ -11,7 +11,8 @@ setup(name='audioLIME',
       install_requires=[
           'numpy',
           'scipy',
-          'librosa',
+          'librosa==0.7.2',
+          'numba==0.48',
           'scikit-learn>=0.18',
           'regressors'
       ],
