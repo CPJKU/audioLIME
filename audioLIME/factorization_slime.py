@@ -15,6 +15,8 @@ class SoundLIMEFactorization(Factorization):
     """
     def __init__(self, audio_path, frequency_segments=4, temporal_segments=6, sr=16000, mel_scale=False):
         super().__init__()
+        warnings.warn("Name of the class and interface will probably change in an upcoming version.",
+                      DeprecationWarning)
         # TODO: could also derive from DataBasedFactorization
         self.frequency_segments = frequency_segments
         self.temporal_segments = temporal_segments
