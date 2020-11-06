@@ -4,6 +4,7 @@ import os
 import librosa
 from audioLIME.factorization_base import Factorization
 from audioLIME.data_provider import RawAudioProvider
+import pickle
 
 try:
     import torch
@@ -96,7 +97,7 @@ class DataBasedFactorization(Factorization):
                 current_component = np.zeros(explained_length, dtype=np.float32)
                 current_component[segment_start:segment_end] = self.components[co][segment_start:segment_end]
                 temporary_components.append(current_component)
-                component_names.append(self._components_names[co]+str(s))
+                component_names.append(self._components_names[co] + str(s))
 
         self.components = temporary_components
         self._components_names = component_names
@@ -106,29 +107,51 @@ class DataBasedFactorization(Factorization):
         self.prepare_components(start_sample, y_length)
 
 
+def separate(separator, waveform, target_sr, spleeter_sr):
+    waveform = np.expand_dims(waveform, axis=0)
+    waveform = librosa.resample(waveform, target_sr, spleeter_sr)
+    waveform = np.swapaxes(waveform, 0, 1)
+    prediction = separator.separate(waveform)
+    return prediction
+
+
 class SpleeterFactorization(DataBasedFactorization):
-    def __init__(self, data_provider, n_temporal_segments, composition_fn, model_name, target_sr=16000):
+    def __init__(self, data_provider, n_temporal_segments, composition_fn, model_name,
+                 spleeter_sources_path=None, target_sr=16000):
         assert isinstance(data_provider, RawAudioProvider)  # TODO: nicer check
         self.model_name = model_name
         self.target_sr = target_sr
+        sample_name = os.path.basename(data_provider.get_audio_path().replace(".mp3", ""))
+        if spleeter_sources_path is not None:
+            self.sources_path = os.path.join(spleeter_sources_path,
+                                             model_name.replace("spleeter:", ""), sample_name)
+        else:
+            self.sources_path = None
+
         super().__init__(data_provider, n_temporal_segments, composition_fn)
 
     def initialize_components(self):
         spleeter_sr = 44100
 
-        if Separator is None:
-            raise ImportError('spleeter is not imported')
+        prediction_path = None
+        if self.sources_path is not None:
+            prediction_path = os.path.join(self.sources_path, "prediction.pt")
 
-        separator = Separator(self.model_name, multiprocess=False)
+        if not prediction_path is None and os.path.exists(prediction_path):
+            print("loading {} ...".format(prediction_path))
+            prediction = pickle.load(open(prediction_path, "rb"))
+        else:
+            separator = Separator(self.model_name, multiprocess=False)
+            waveform = self.data_provider.get_mix()
+            prediction = separate(separator, waveform, self.target_sr, spleeter_sr)
 
-        # Perform the separation:
-        waveform = self.data_provider.get_mix()
-        waveform = np.expand_dims(waveform, axis=0)
-        waveform = librosa.resample(waveform, self.target_sr, spleeter_sr)
-        waveform = np.swapaxes(waveform, 0, 1)
-        prediction = separator.separate(waveform)
+            if not prediction_path is None:  # need to store
+                if not os.path.exists(self.sources_path):
+                    os.mkdir(self.sources_path)
+                pickle.dump(prediction, open(prediction_path, "wb"))
 
         self.original_components = [
             librosa.resample(np.mean(prediction[key], axis=1), spleeter_sr, self.target_sr) for
             key in prediction]
+
         self._components_names = list(prediction.keys())

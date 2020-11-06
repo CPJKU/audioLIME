@@ -1,2 +1,2 @@
 torch<1.5
-spleeter
+spleeter==1.5.4
