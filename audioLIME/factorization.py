@@ -115,31 +115,6 @@ def separate(separator, waveform, target_sr, spleeter_sr):
     return prediction
 
 
-# class SpleeterFactorization(DataBasedFactorization):
-#     def __init__(self, data_provider, n_temporal_segments, composition_fn, model_name, target_sr=16000):
-#         assert isinstance(data_provider, RawAudioProvider)  # TODO: nicer check
-#         self.model_name = model_name
-#         self.target_sr = target_sr
-#         super().__init__(data_provider, n_temporal_segments, composition_fn, use_torch=False)
-#
-#     def initialize_components(self):
-#         spleeter_sr = 44100
-#
-#         if Separator is None:
-#             raise ImportError('spleeter is not imported')
-#
-#         separator = Separator(self.model_name, multiprocess=False)
-#
-#         # Perform the separation:
-#         waveform = self.data_provider.get_mix()
-#         prediction = separate(separator, waveform, self.target_sr, spleeter_sr)
-#
-#         self.original_components = [
-#             librosa.resample(np.mean(prediction[key], axis=1), spleeter_sr, self.target_sr) for
-#             key in prediction]
-#         self._components_names = list(prediction.keys())
-
-
 class SpleeterFactorization(DataBasedFactorization):
     def __init__(self, data_provider, n_temporal_segments, composition_fn, model_name,
                  spleeter_sources_path=None, target_sr=16000):
