@@ -2,7 +2,7 @@ import unittest
 import librosa
 import numpy as np
 from audioLIME.data_provider import RawAudioProvider
-from audioLIME.factorization import SpleeterPrecomputedFactorization as SpleeterFactorization
+from audioLIME.factorization import SpleeterFactorization
 
 spleeter_sources_path = '/share/home/verena/data/MSDTest100/spleeter_sources/'
 
@@ -18,7 +18,7 @@ class TestSpleeterFactorization(unittest.TestCase):
                                               composition_fn=None,
                                               model_name='spleeter:5stems',
                                               spleeter_sources_path=spleeter_sources_path)
-        all_components = factorization.compose_model_input().detach().cpu().numpy()
+        all_components = factorization.compose_model_input()
         self.assertTrue(np.allclose(all_components, self.reference, atol=10**5))
 
     def test_AnalysisWindow(self):
@@ -30,7 +30,7 @@ class TestSpleeterFactorization(unittest.TestCase):
                                               model_name='spleeter:5stems',
                                               spleeter_sources_path=spleeter_sources_path)
         factorization.set_analysis_window(start, leng)
-        all_components = factorization.compose_model_input().detach().cpu().numpy()
+        all_components = factorization.compose_model_input()
         self.assertTrue(np.allclose(all_components, reference, atol=10 ** 5))
 
     def test_TemporalSegmentation(self):
@@ -39,7 +39,7 @@ class TestSpleeterFactorization(unittest.TestCase):
                                               composition_fn=None,
                                               model_name='spleeter:5stems',
                                               spleeter_sources_path=spleeter_sources_path)
-        all_components = factorization.compose_model_input().detach().cpu().numpy()
+        all_components = factorization.compose_model_input()
         leng = len(all_components)  # to deal with ignored samples at the end
         self.assertTrue(np.allclose(all_components, self.reference[:leng], atol=10 ** 5))
         self.assertEqual(n_segments * 5, factorization.get_number_components()) # nr. sources = 5
