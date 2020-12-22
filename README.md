@@ -75,7 +75,7 @@ e.g. `nussl` or `spleeter`.
 ### Installation & Usage of spleeter
 
 ```sh
-pip install spleeter==1.5.4
+pip install spleeter==2.0.2
 ```
 When you're using `spleeter` for the first time, it will download the used model in a directory
 `pretrained_models`. You can only change the location by setting an environment variable 

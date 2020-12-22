@@ -13,11 +13,6 @@ except ImportError:
     torch = None
 
 try:
-    import yaml
-except ImportError:
-    yaml = None
-
-try:
     from spleeter.separator import Separator
 except ImportError:
     Separator = None
@@ -108,9 +103,8 @@ class DataBasedFactorization(Factorization):
 
 
 def separate(separator, waveform, target_sr, spleeter_sr):
-    waveform = np.expand_dims(waveform, axis=0)
     waveform = librosa.resample(waveform, target_sr, spleeter_sr)
-    waveform = np.swapaxes(waveform, 0, 1)
+    waveform = np.expand_dims(waveform, axis=1)
     prediction = separator.separate(waveform)
     return prediction
 
@@ -119,6 +113,7 @@ class SpleeterFactorization(DataBasedFactorization):
     def __init__(self, data_provider, n_temporal_segments, composition_fn, model_name,
                  spleeter_sources_path=None, target_sr=16000):
         assert isinstance(data_provider, RawAudioProvider)  # TODO: nicer check
+
         self.model_name = model_name
         self.target_sr = target_sr
         sample_name = os.path.basename(data_provider.get_audio_path().replace(".mp3", ""))
@@ -141,8 +136,8 @@ class SpleeterFactorization(DataBasedFactorization):
             print("loading {} ...".format(prediction_path))
             prediction = pickle.load(open(prediction_path, "rb"))
         else:
-            separator = Separator(self.model_name, multiprocess=False)
             waveform = self.data_provider.get_mix()
+            separator = Separator(self.model_name, multiprocess=False)
             prediction = separate(separator, waveform, self.target_sr, spleeter_sr)
 
             if not prediction_path is None:  # need to store
