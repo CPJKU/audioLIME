@@ -35,6 +35,12 @@ audioLIME is introduced/used in the following publications:
 * Verena Haunschmid, Ethan Manilow and Gerhard Widmer, *Towards Musically Meaningful Explanations Using Source Separation* 
   * paper: [arxiv](https://arxiv.org/abs/2009.02051)
 
+* Alessandro B. Melchiorre, Verena Haunschmid, Markus Schedl and Gerhard Widmer, *LEMONS: Listenable Explanations for Music recOmmeNder Systems*
+    * [paper](https://www.springerprofessional.de/en/lemons-listenable-explanations-for-music-recommender-systems/19017596) | [code](https://github.com/CPJKU/LEMONS) | [video](https://www.youtube.com/watch?v=giSPrPnZ7mc)
+
+* Shreyan Chowdhury, Verena Praher and Gerhard Widmer, *Tracing Back Music Emotion Predictions to Sound Sources and Intuitive Perceptual Qualities*
+    * to appear in [SMC 2021](https://smc2021conference.org/)
+    * [preprint](https://arxiv.org/abs/2106.07787)
 
 
 ## Installation
