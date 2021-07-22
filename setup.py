@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='audioLIME',
-      version='0.0.2',
+      version='0.0.3',
       description='audioLIME: Listenable Explanations Using Source Separation',
       url='https://github.com/CPJKU/audioLIME',
       author='Verena Haunschmid',
