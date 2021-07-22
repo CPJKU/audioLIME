@@ -34,9 +34,6 @@ class AudioExplanation(object):
             raise ValueError('positive_components, negative_components or both must be True')
         if num_components == 'auto':
             raise ValueError("num_components='auto' was removed.")
-        if num_components == 'all':
-            import warnings
-            warnings.warn("'all' replaces 'auto' as the default parameters.")
 
         exp = self.local_exp[label]
 
@@ -112,7 +109,8 @@ class LimeAudioExplainer(object):
                          batch_size=10,
                          distance_metric='cosine',
                          model_regressor=None,
-                         random_seed=None):
+                         random_seed=None,
+                         fit_intercept=True):
         """Generates explanations for a prediction.
 
         First, we generate neighborhood data by randomly perturbing features
@@ -182,7 +180,8 @@ class LimeAudioExplainer(object):
                  ret_exp.score[label], ret_exp.local_pred[label]) = self.base.explain_instance_with_data(
                     data, labels, distances, label, num_features,
                     model_regressor=model_regressor,
-                    feature_selection=self.feature_selection)
+                    feature_selection=self.feature_selection,
+                    fit_intercept=fit_intercept)
         else:
             for target in range(num_reg_targets):
                 (ret_exp.intercept[target],
@@ -191,7 +190,8 @@ class LimeAudioExplainer(object):
                  ret_exp.local_pred[target]) = self.base.explain_instance_with_data(
                     data, labels, distances, target, num_features,
                     model_regressor=model_regressor,
-                    feature_selection=self.feature_selection)
+                    feature_selection=self.feature_selection,
+                    fit_intercept=fit_intercept)
         return ret_exp
 
     def data_labels(self,
@@ -225,11 +225,7 @@ class LimeAudioExplainer(object):
         audios = []
         for row in data:
             non_zeros = np.where(row != 0)[0]
-            if len(non_zeros) == 0:
-                like = self.factorization.compose_model_input()
-                temp = np.zeros_like(like) + like.min()
-            else:
-                temp = self.factorization.compose_model_input(non_zeros)
+            temp = self.factorization.compose_model_input(non_zeros)
             audios.append(temp)
             if len(audios) == batch_size:
                 preds = predict_fn(np.array(audios))

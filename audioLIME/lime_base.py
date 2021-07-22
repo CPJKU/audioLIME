@@ -145,7 +145,8 @@ class LimeBase(object):
                                    label,
                                    num_features,
                                    feature_selection='auto',
-                                   model_regressor=None):
+                                   model_regressor=None,
+                                   fit_intercept=True):
         """Takes perturbed data, labels and distances, returns explanation.
 
         Args:
@@ -190,7 +191,7 @@ class LimeBase(object):
                                                num_features,
                                                feature_selection)
         if model_regressor is None:
-            model_regressor = Ridge(alpha=1, fit_intercept=True,
+            model_regressor = Ridge(alpha=1, fit_intercept=fit_intercept,
                                     random_state=self.random_state)
         easy_model = model_regressor
         easy_model.fit(neighborhood_data[:, used_features],

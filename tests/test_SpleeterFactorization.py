@@ -1,37 +1,27 @@
 import unittest
 import librosa
 import numpy as np
-from audioLIME.data_provider import RawAudioProvider
-from audioLIME.factorization import SpleeterFactorization
+from audioLIME.audio_utils import load_audio
+from audioLIME.factorization_spleeter import SpleeterFactorization
 
 class TestSpleeterFactorization(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        target_sr = 16000
         self.audio_path = librosa.util.example_audio_file()
-        self.dp = RawAudioProvider(self.audio_path)
-        self.reference, _ = librosa.load(self.audio_path, sr=16000)
+        self.audio = load_audio(self.audio_path, target_sr)
+        self.reference, _ = librosa.load(self.audio_path, sr=target_sr)
 
     def test_SumAllComponents(self):
-        factorization = SpleeterFactorization(self.dp, n_temporal_segments=1,
+        factorization = SpleeterFactorization(self.audio, temporal_segmentation_params=1,
                                               composition_fn=None,
                                               model_name='spleeter:5stems')
         all_components = factorization.compose_model_input()
         self.assertTrue(np.allclose(all_components, self.reference, atol=10**5))
 
-    def test_AnalysisWindow(self):
-        start = 35000
-        leng = 27333
-        reference = self.reference[start:start+leng]
-        factorization = SpleeterFactorization(self.dp, n_temporal_segments=1,
-                                              composition_fn=None,
-                                              model_name='spleeter:5stems')
-        factorization.set_analysis_window(start, leng)
-        all_components = factorization.compose_model_input()
-        self.assertTrue(np.allclose(all_components, reference, atol=10 ** 5))
-
     def test_TemporalSegmentation(self):
         n_segments = 7
-        factorization = SpleeterFactorization(self.dp, n_temporal_segments=n_segments,
+        factorization = SpleeterFactorization(self.audio, temporal_segmentation_params=n_segments,
                                               composition_fn=None,
                                               model_name='spleeter:5stems')
         all_components = factorization.compose_model_input()

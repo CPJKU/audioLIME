@@ -4,9 +4,10 @@
 
 This repository contains the Python package audioLIME, a tool for creating listenable explanations
 for machine learning models in music information retrival (MIR).
-audioLIME is based on the method lime (local interpretable model-agnostic explanations) work 
+audioLIME is based on the method LIME (local interpretable model-agnostic explanations), work 
 presented in [this paper](https://arxiv.org/abs/1602.04938) and uses source separation estimates in
-order to create interpretable components.
+order to create interpretable components. Alternative types of interpretable components are available 
+(see the last section) and more will be added in the future.
 
 ## Citing
 
@@ -66,17 +67,15 @@ To install a version for development purposes
 
 ### Tests
 
-To test your installation, the following test are available:
+To test your installation, the following test are available (more to come :)):
 
 `python -m unittest tests.test_SpleeterFactorization`
-
-`python -m unittest tests.test_DataProviders`
 
 ## Note on Requirements
 
 To keep it lightweight, not all possible dependencies are contained in `setup.py`. 
 Depending on the factorization you want to use, you might need different packages, 
-e.g. `nussl` or `spleeter`. 
+e.g. `spleeter`. 
 
 ### Installation & Usage of spleeter
 
@@ -90,7 +89,7 @@ When you're using `spleeter` for the first time, it will download the used model
 for example:
 
 ```sh
-export MODEL_PATH=/share/home/verena/experiments/spleeter/pretrained_models/
+export MODEL_PATH=/path/to/spleeter/pretrained_models/
 ```
 
 ## Available Factorizations
@@ -99,49 +98,8 @@ Currently we have the following factorizations implemented:
 
 * SpleeterFactorization based on the source separation system spleeter 
 ([code](https://github.com/deezer/spleeter/))
-* SoundLIMEFactorization: time-frequency segmentation based on 
+* TimeFrequencyTorchFactorization: time-frequency segmentation based on 
 [SoundLIME](https://github.com/saum25/SoundLIME) 
 (the original implementation was not flexible enough for our experiments)
-
-## Usage Example
-
-Here we demonstrate how we can explain the prediction of 
-FCN ([code](https://github.com/minzwon/sota-music-tagging-models), 
-[Choi 2016](https://arxiv.org/abs/1606.00298), 
-[Won 2020](https://arxiv.org/abs/2006.00751)) using `SpleeterFactorization`.
-
-For this to work you need to install the requirements found in the above mentioned repo of 
-the tagger and spleeter:
-```sh
-pip install -r examples/requirements.txt
-```
-
-```python
-    data_provider = RawAudioProvider(audio_path)
-    spleeter_factorization = SpleeterFactorization(data_provider,
-                                                   n_temporal_segments=10,
-                                                   composition_fn=None,
-                                                   model_name='spleeter:5stems')
-
-    explainer = lime_audio.LimeAudioExplainer(verbose=True, absolute_feature_sort=False)
-
-    explanation = explainer.explain_instance(factorization=spleeter_factorization,
-                                             predict_fn=predict_fn,
-                                             top_labels=1,
-                                             num_samples=16384,
-                                             batch_size=32
-                                             )
-```
-
-For the details on setting everything up, see 
-[example_using_spleeter_fcn](examples/example_using_spleeter_fcn.py).
-
-Listen to the [input](https://soundcloud.com/veroamilbe/hop-along-sister-input) 
-and [explanation](https://soundcloud.com/veroamilbe/hop-along-sister-explanation).
-
-## TODOs
-
-* [ ] upload to [pypi.org](https://pypi.org) (to allow installation via `pip`)
-* [ ] usage example for `SoundLIMEFactorization`
-* [ ] tutorial in form of a Jupyter Notebook
-* [ ] more documentation
+* ImageLikeFactorization: super pixel segmentation, as proposed in the 
+[original paper](https://arxiv.org/abs/1602.04938) used for images.
