@@ -43,7 +43,7 @@ audioLIME is introduced/used in the following publications:
     * to appear in [SMC 2021](https://smc2021conference.org/)
     * [preprint](https://arxiv.org/abs/2106.07787)
 
-* Verena Praher(&ast;), Katharina Prinz(&ast;), Arthur Flexer, Gerhard Widmer, *On the Veracity of Local, Model-agnostic Explanations in Audio Classification*
+* Verena Praher(&ast;), Katharina Prinz(&ast;), Arthur Flexer and Gerhard Widmer, *On the Veracity of Local, Model-agnostic Explanations in Audio Classification*
   * (&ast;) equal contribution
   * [preprint](https://arxiv.org/abs/2107.09045)
   * code: [audioLIME v0.0.3](https://github.com/CPJKU/audioLIME/tree/v0.0.3) and [veracity](https://github.com/CPJKU/veracity/)
